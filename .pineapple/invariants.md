@@ -41,17 +41,17 @@
 **Touched by:** `app/api/auth/`, `AuthProvider`, sign-out flow
 **Status:** as-built (P1-1)
 
-## INV-WEB-AUTH-4 — Sign-out revokes refresh family (target: P1-2)
-**Rule (target):** Sign out calls BFF logout → `POST /auth/logout` server-side, clears httpOnly cookie, resets `AuthProvider`, redirects `/login`.
-**Rule (as-built):** `clearTokens()` only; no server revoke.
+## INV-WEB-AUTH-4 — Sign-out revokes refresh family
+**Rule:** Sign out calls BFF logout → `POST /auth/logout` server-side, clears httpOnly cookie, resets `AuthProvider`, redirects `/login`.
 **Depends on:** INV-WEB-AUTH-3, platform INV-AUTH-2
-**Status:** as-built gap · **target epic:** P1-2
+**Touched by:** `AdminShell` sign-out, `AuthProvider.clearSession`, `app/api/auth/logout`
+**Status:** as-built (P1-2)
 
-## INV-WEB-AUTH-5 — Protected layout session guard (target: P1-2)
-**Rule:** Protected layout groups (`(platform)`, `(lsp)`, `(portal)`, `(account)`) validate session via `AuthProvider`; unauthenticated users redirect to `/login`. Privileged roles (`platform_admin`, `lsp_admin`, `sub_admin`) must complete MFA before accessing protected routes.
+## INV-WEB-AUTH-5 — Protected layout session guard
+**Rule:** Protected layout groups (`(platform)`, `(lsp)`, `(portal)`, `(account)`) validate session via `ProtectedGuard` + `AuthProvider`; unauthenticated users redirect to `/login` with `returnTo`. Privileged roles (`platform_admin`, `lsp_admin`, `sub_admin`) must complete MFA before accessing protected routes.
 **Why:** Replaces ADR-WEB-003 client-only `/dashboard` guard.
-**Touched by:** protected `layout.tsx` files in each group
-**Status:** **target** · epic P1-2
+**Touched by:** protected `layout.tsx` files in each group, `components/protected-guard.tsx`
+**Status:** as-built (P1-2)
 
 ## INV-WEB-UI-1 — Auth shell composition
 **Rule:** Public auth routes render inside `AuthShell` (`.theme-auth` scope) with `components/design-system` primitives (`Input`, `Button`, `Checkbox`, `Alert`, `Label`) and `form-field` composites (`FormField`, `SelectField`, `CheckboxField`).
@@ -90,13 +90,13 @@
 
 ## INV-WEB-TENANT-1 — Last tenant preference (localStorage)
 **Rule:** Persist `leo.last_tenant_id` in `localStorage` after login or successful switch-tenant. On login, if stored UUID ≠ JWT `tenant_id` and is an active held membership (`GET /memberships`), call BFF `switch-tenant` before role routing.
-**Touched by:** `AuthProvider`, P1-2 switch flow
-**Status:** **target** · epic P1-2
+**Touched by:** `AuthProvider`, `lib/last-tenant.ts`, `lib/auth-post-login.ts`, `SwitchTenantModal`
+**Status:** as-built (P1-2)
 
 ## INV-WEB-PERM-1 — Permission matrix codegen
-**Rule:** `lib/permissions/generated.ts` is build-time generated from `../leo-api/src/modules/identity/constants/permission-matrix.ts` via `npm run codegen:permissions`; never hand-edit generated file.
-**Touched by:** `PermissionGate`, build script
-**Status:** **target** · epic P1-2
+**Rule:** `lib/permissions/generated.ts` is build-time generated from `../leo-api/src/modules/identity/constants/permission-matrix.ts` via `npm run codegen:permissions`; never hand-edit generated file. `PermissionGate` default-deny wraps `AdminShell` nav links.
+**Touched by:** `PermissionGate`, `AdminShell`, `scripts/codegen-permissions.mjs`
+**Status:** as-built (P1-2)
 
 ## INV-WEB-WSS-1 — Realtime via Next proxy
 **Rule:** Browser WSS client connects to same-origin `/realtime`; Next rewrites/proxies to leo-api gateway. No direct cross-origin socket to API port from browser.
