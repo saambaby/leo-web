@@ -3,7 +3,7 @@ kind: TaskGraph
 metadata:
   project: leo-web
   phase: P1-1
-  status: approved
+  status: completed
   created: "2026-07-07"
 
 waves:

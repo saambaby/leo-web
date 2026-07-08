@@ -1,66 +1,19 @@
 {
   "phase": "P1-1",
   "parent_issue": 1,
-  "overall_status": "running",
-  "current_wave": 1,
-  "integration_contract_owner": "P1-1-T-01",
+  "overall_status": "completed",
+  "current_wave": 3,
   "tasks": {
-    "P1-1-T-01": {
-      "status": "in_flight",
-      "role": "high",
-      "depends_on": [],
-      "tracker_issue": 2,
-      "branch": "pin-2/p1-1-t01-session-foundation",
-      "agent": null,
-      "started_at": "2026-07-07T20:55:00-04:00",
-      "completed_at": null,
-      "commit": null,
-      "attempt": 1,
-      "error": null,
-      "worktree": false,
-      "notes": "Foundation task — coordinator branch, no worktree"
-    },
-    "P1-1-T-02": {
-      "status": "pending",
-      "role": "standard",
-      "depends_on": ["P1-1-T-01"],
-      "tracker_issue": 3,
-      "branch": "pin-3/p1-1-t02-design-system-auth",
-      "agent": null,
-      "started_at": null,
-      "completed_at": null,
-      "commit": null,
-      "attempt": 0,
-      "error": null,
-      "worktree": true
-    },
-    "P1-1-T-03": {
-      "status": "pending",
-      "role": "standard",
-      "depends_on": ["P1-1-T-01"],
-      "tracker_issue": 4,
-      "branch": "pin-4/p1-1-t03-router-stubs",
-      "agent": null,
-      "started_at": null,
-      "completed_at": null,
-      "commit": null,
-      "attempt": 0,
-      "error": null,
-      "worktree": true
-    },
-    "P1-1-T-04": {
-      "status": "pending",
-      "role": "high",
-      "depends_on": ["P1-1-T-01", "P1-1-T-02", "P1-1-T-03"],
-      "tracker_issue": 5,
-      "branch": "pin-5/p1-1-t04-auth-flows",
-      "agent": null,
-      "started_at": null,
-      "completed_at": null,
-      "commit": null,
-      "attempt": 0,
-      "error": null,
-      "worktree": true
-    }
-  }
+    "P1-1-T-01": { "status": "merged", "tracker_issue": 2, "commit": "705f3f8", "pr": 6 },
+    "P1-1-T-02": { "status": "merged", "tracker_issue": 3, "commit": "8333234", "pr": 8 },
+    "P1-1-T-03": { "status": "merged", "tracker_issue": 4, "commit": "4af8acc", "pr": 7 },
+    "P1-1-T-04": { "status": "merged", "tracker_issue": 5, "commit": "f731625", "pr": 9, "agent": "401cb89f-8cbb-40a6-ab1a-c3360cf2c9c7", "review": "pass-with-nits" }
+  },
+  "pending_manual": [
+    "Signup variants E2E → role home",
+    "Invite accept → /login?invited=1",
+    "Admin setup funnel",
+    "Tenant-less /account + customer_user /portal/call WorkstationCta",
+    "Auth pages visual review vs leo-workstation.html"
+  ]
 }

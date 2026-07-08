@@ -1,11 +1,6 @@
 # P1-1 Taskgraph — Session hardening & auth foundation
 
-> **Status: approved — ready for dispatch.**
-
-| Field | Value |
-| ----- | ----- |
-| **Phase** | P1-1 |
-| **Parent issue** | [#1](https://github.com/saambaby/leo-web/issues/1) |
+> **Status: completed — all tasks merged to main (PRs #6–#9).**
 | **Feature spec** | `.pineapple/features/p1-1-session-auth-foundation.md` |
 | **Epic doc** | `.pineapple/phases/P1-1.md` |
 | **Created** | 2026-07-07 |
