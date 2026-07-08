@@ -2,12 +2,14 @@
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { AuthShell } from "@/components/auth-shell";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
+import { AuthShell, AuthLoadingFallback } from "@/components/auth-shell";
 import { Alert, Button } from "@/components/design-system";
 import { FormField } from "@/components/form-field";
 import { api, ApiError } from "@/lib/api";
 import { useAuth } from "@/components/auth-provider";
+import { routeAfterLogin } from "@/lib/auth-routing";
 import {
   isMfaEnrollmentRequired,
   isMfaRequired,
@@ -15,8 +17,10 @@ import {
   type LoginResult,
 } from "@/lib/auth-types";
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const invited = searchParams.get("invited") === "1";
   const { setSession, setMfaEnrollment } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -59,7 +63,7 @@ export default function LoginPage() {
 
       if (isTokenPair(result)) {
         await setSession(result);
-        router.push("/dashboard");
+        router.push(routeAfterLogin(result.access_token));
       }
     } catch (err) {
       if (err instanceof ApiError) {
@@ -92,6 +96,11 @@ export default function LoginPage() {
       }
     >
       <form onSubmit={handleSubmit} className="space-y-4">
+        {invited ? (
+          <Alert variant="success">
+            Account created — sign in with your new password.
+          </Alert>
+        ) : null}
         {error ? <Alert variant="error">{error}</Alert> : null}
 
         <FormField
@@ -141,5 +150,13 @@ export default function LoginPage() {
         </p>
       </form>
     </AuthShell>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<AuthLoadingFallback />}>
+      <LoginContent />
+    </Suspense>
   );
 }

@@ -21,27 +21,25 @@
 **Touched by:** `lib/api.ts`, all auth pages
 **Status:** as-built
 
-## INV-WEB-AUTH-1 — Session storage (target: P1-1)
-**Rule (target):** Refresh token in **httpOnly** `Secure` `SameSite` cookie set/cleared only via BFF (`app/api/auth/*`). Access token in **memory only** via `AuthProvider` — never `sessionStorage` or `localStorage`. Access TTL ≤15 min per platform D7.
-**Rule (as-built, until P1-1 ships):** `TokenPair` in `sessionStorage` under `leo.auth.tokens` via `lib/session.ts`. MFA enrollment pending uses `leo.auth.mfa_enrollment`.
+## INV-WEB-AUTH-1 — Session storage
+**Rule:** Refresh token in **httpOnly** `Secure` `SameSite` cookie set/cleared only via BFF (`app/api/auth/*`). Access token in **memory only** via `AuthProvider` — never `sessionStorage` or `localStorage`. Access TTL ≤15 min per platform D7. MFA enrollment pending and MFA login pending held in `AuthProvider` React state only.
 **Why:** XSS-resistant session per `docs/ARCHITECTURE.md` §6.3; retires ADR-WEB-001.
 **Depends on:** platform INV-AUTH-1, INV-AUTH-2
 **Touched by:** `AuthProvider`, BFF routes, `lib/api.ts`, all protected layouts
-**Status:** as-built spike · **target epic:** P1-1
+**Status:** as-built (P1-1)
 
-## INV-WEB-AUTH-2 — Bearer on authenticated calls (target: P1-1)
-**Rule (target):** `lib/api.ts` attaches `Authorization: Bearer <access_token>` on all non-public API calls; silent refresh once on 401 via BFF; session-expired overlay → `/login` on failure.
-**Rule (as-built):** No Bearer header; unauthenticated auth POSTs only.
+## INV-WEB-AUTH-2 — Bearer on authenticated calls
+**Rule:** `lib/api.ts` attaches `Authorization: Bearer <access_token>` on all non-public API calls; silent refresh once on 401 via BFF; session-expired overlay → `/login` on failure.
 **Why:** Tenant-scoped reads/writes require authenticated requests per arch §9.1.
-**Depends on:** INV-WEB-AUTH-1 (target), platform INV-AUTH-1
+**Depends on:** INV-WEB-AUTH-1, platform INV-AUTH-1
 **Touched by:** `lib/api.ts`, TanStack Query fetchers, admin/portal pages
-**Status:** as-built gap · **target epic:** P1-1
+**Status:** as-built (P1-1)
 
-## INV-WEB-AUTH-3 — BFF for cookie auth mutations (target: P1-1)
+## INV-WEB-AUTH-3 — BFF for cookie auth mutations
 **Rule:** Browser never reads or writes the refresh token directly. `POST /auth/refresh` and `POST /auth/logout` are proxied through `app/api/auth/*` route handlers that manage the httpOnly cookie and CSRF token on mutations.
 **Why:** Same-origin cookie semantics without exposing refresh to client JS.
 **Touched by:** `app/api/auth/`, `AuthProvider`, sign-out flow
-**Status:** **target** · epic P1-1
+**Status:** as-built (P1-1)
 
 ## INV-WEB-AUTH-4 — Sign-out revokes refresh family (target: P1-2)
 **Rule (target):** Sign out calls BFF logout → `POST /auth/logout` server-side, clears httpOnly cookie, resets `AuthProvider`, redirects `/login`.
@@ -58,14 +56,14 @@
 ## INV-WEB-UI-1 — Auth shell composition
 **Rule:** Public auth routes render inside `AuthShell` (`.theme-auth` scope) with `components/design-system` primitives (`Input`, `Button`, `Checkbox`, `Alert`, `Label`) and `form-field` composites (`FormField`, `SelectField`, `CheckboxField`).
 **Why:** Consistent auth UX; single tokenized surface for auth forms.
-**Touched by:** signup, login, verify-email, forgot/reset password, mfa/enroll
+**Touched by:** signup, login, verify-email, forgot/reset password, mfa, mfa/enroll, invite/accept, admin/setup
 **Status:** as-built
 
 ## INV-WEB-UI-2 — Auth dark theme
 **Rule:** Auth pages use `.theme-auth` semantic tokens (`bg-background`, `text-foreground`) and `black-*` / `signal-*` scale classes from `components/design-system` — no hardcoded `#0b0d12` canvas in `AuthShell`.
 **Why:** Aligns auth UI with workstation token source (`components/design-system/tokens.css`).
 **Touched by:** `AuthShell`, public auth routes, `form-field.tsx`
-**Status:** as-built (P1-1-T-02)
+**Status:** as-built (P1-1)
 
 ## INV-WEB-ROUTE-1 — Query params for one-shot tokens
 **Rule:** Email verify and password reset read `?token=` from URL search params; missing token shows error state — never POST without token.
@@ -73,22 +71,22 @@
 **Touched by:** verify-email, reset-password
 **Status:** as-built
 
-## INV-WEB-ROUTE-2 — Role-based post-login routing (target: P1-1)
-**Rule:** After successful login, route by JWT `role` per product spec §4. Invite accept does **not** mint a session — user lands `/login?invited=1` then logs in normally. No `/dashboard` route.
+## INV-WEB-ROUTE-2 — Role-based post-login routing
+**Rule:** After successful login, route by JWT `role` via `lib/auth-routing.ts` per product spec §4; missing `tenant_id` → `/account`. Invite accept does **not** mint a session — user lands `/login?invited=1` then logs in normally. No `/dashboard` route.
 **Why:** Each persona has a defined web home per arch §6.2 / BD7.
-**Touched by:** login, invite accept, `AuthProvider` post-auth hook
-**Status:** **target** · epic P1-1
+**Touched by:** login, mfa, mfa/enroll, invite/accept, admin/setup, `lib/auth-routing.ts`
+**Status:** as-built (P1-1)
 
 ## INV-WEB-ROUTE-3 — No cross-app auto-redirect
 **Rule:** leo-web never auto-opens leo-workstation (or vice versa). Workstation CTAs use `WorkstationCta` — native app open/download copy and optional custom URL scheme (`leoconnexio://`); **no web URL env**.
 **Why:** Product decision D11/D13; leo-workstation is an installed app.
 **Touched by:** `/account`, `/portal/call` stub
-**Status:** **target** · epic P1-1
+**Status:** as-built (P1-1)
 
 ## INV-WEB-ROUTE-4 — Workstation CTA (native app)
 **Rule:** `WorkstationCta` does not use `WORKSTATION_URL` or external https links as primary action. Show platform-appropriate "Open Leo Workstation" / install guidance; optional `href="leoconnexio://"` only when app registers the scheme.
 **Touched by:** `components/workstation-cta.tsx`
-**Status:** **target** · epic P1-1
+**Status:** as-built (P1-1)
 
 ## INV-WEB-TENANT-1 — Last tenant preference (localStorage)
 **Rule:** Persist `leo.last_tenant_id` in `localStorage` after login or successful switch-tenant. On login, if stored UUID ≠ JWT `tenant_id` and is an active held membership (`GET /memberships`), call BFF `switch-tenant` before role routing.
@@ -122,12 +120,12 @@
 **Touched by:** `app/signup/page.tsx`
 **Status:** as-built
 
-## INV-WEB-MFA-1 — Hybrid MFA routing (target: P1-1)
-**Rule:** `mfa_required` on login → inline TOTP on `/login`. Switch-tenant and deep-link MFA → dedicated `/mfa?returnTo=…`. `mfa_enrollment_required` → `/mfa/enroll` (enrollment pending state in memory or short-lived session, not refresh token).
+## INV-WEB-MFA-1 — Hybrid MFA routing
+**Rule:** `mfa_required` on login → inline TOTP on `/login`. Switch-tenant and deep-link MFA → dedicated `/mfa?returnTo=…` (re-POST `/auth/login` with `totp_code`; full switch-tenant wiring in P1-2). `mfa_enrollment_required` → `/mfa/enroll` with enrollment pending state in `AuthProvider` memory only.
 **Why:** Product decision D8; login speed + reusable MFA for tenant switch.
 **Depends on:** platform INV-AUTH-3
-**Touched by:** login, mfa, mfa/enroll, switch-tenant modal
-**Status:** as-built (inline only) · **target epic:** P1-1
+**Touched by:** login, mfa, mfa/enroll, admin/setup, switch-tenant modal (P1-2)
+**Status:** as-built (P1-1)
 
 ## INV-WEB-FORM-1 — Unsaved org form guard
 **Rule:** Editable org profile forms (`PATCH /organizations/me`) use unsaved-changes guard (`beforeunload` + in-app navigation prompt) when `isDirty`.

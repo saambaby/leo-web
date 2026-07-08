@@ -2,16 +2,20 @@
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { useAuth } from "@/components/auth-provider";
-import { AuthShell } from "@/components/auth-shell";
+import { AuthShell, AuthLoadingFallback } from "@/components/auth-shell";
 import { Alert, Button } from "@/components/design-system";
 import { FormField } from "@/components/form-field";
 import { api, ApiError } from "@/lib/api";
+import { routeAfterLogin, safeReturnPath } from "@/lib/auth-routing";
 import type { TokenPair } from "@/lib/auth-types";
 
-export default function MfaEnrollPage() {
+function MfaEnrollContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnTo = safeReturnPath(searchParams.get("returnTo"));
   const {
     mfaEnrollment: enrollment,
     setSession,
@@ -39,7 +43,7 @@ export default function MfaEnrollPage() {
 
       await setSession(result);
       clearMfaEnrollment();
-      router.push("/dashboard");
+      router.push(returnTo ?? routeAfterLogin(result.access_token));
     } catch (err) {
       if (err instanceof ApiError) {
         setError(err.message);
@@ -104,5 +108,13 @@ export default function MfaEnrollPage() {
         </form>
       )}
     </AuthShell>
+  );
+}
+
+export default function MfaEnrollPage() {
+  return (
+    <Suspense fallback={<AuthLoadingFallback />}>
+      <MfaEnrollContent />
+    </Suspense>
   );
 }
