@@ -1,33 +1,18 @@
 {
   "phase": "P1-2",
   "parent_issue": 10,
-  "overall_status": "running",
-  "current_wave": 1,
+  "overall_status": "completed",
+  "current_wave": 3,
   "tasks": {
-    "P1-2-T-01": {
-      "status": "in_flight",
-      "role": "high",
-      "depends_on": [],
-      "tracker_issue": 11,
-      "branch": "pin-11/p1-2-t01-foundation",
-      "attempt": 1,
-      "worktree": false
-    },
-    "P1-2-T-02": {
-      "status": "in_review",
-      "role": "high",
-      "depends_on": ["P1-2-T-01"],
-      "tracker_issue": 12,
-      "branch": "pin-12/p1-2-t02-admin-shell",
-      "worktree": true
-    },
-    "P1-2-T-03": {
-      "status": "pending",
-      "role": "high",
-      "depends_on": ["P1-2-T-01", "P1-2-T-02"],
-      "tracker_issue": 13,
-      "branch": "pin-13/p1-2-t03-switch-account",
-      "worktree": true
-    }
-  }
+    "P1-2-T-01": { "status": "merged", "tracker_issue": 11, "pr": 14, "commit": "d04bf4f" },
+    "P1-2-T-02": { "status": "merged", "tracker_issue": 12, "pr": 15, "agent": "a6a744e3-ffc0-4cb2-80dc-938bf2b692d9" },
+    "P1-2-T-03": { "status": "merged", "tracker_issue": 13, "pr": 16, "commit": null, "agent": "00965132-6af6-4cf8-be95-967b96b3f76c" }
+  },
+  "pending_manual": [
+    "Switch-tenant with 2+ memberships",
+    "MFA returnTo after switch",
+    "Sign-out revokes refresh server-side",
+    "Tenant-less /account awaiting-affiliation",
+    "PermissionGate hides cross-role nav"
+  ]
 }

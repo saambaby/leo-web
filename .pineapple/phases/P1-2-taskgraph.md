@@ -1,6 +1,6 @@
 # P1-2 Taskgraph — Protected shell & shared chrome
 
-> **Status: approved — ready for dispatch.**
+> **Status: completed — all tasks merged to main (PRs #14–#16). Closes P1 spine.**
 
 | Field | Value |
 | ----- | ----- |
