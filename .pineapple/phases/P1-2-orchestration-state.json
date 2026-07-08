@@ -14,7 +14,7 @@
       "worktree": false
     },
     "P1-2-T-02": {
-      "status": "pending",
+      "status": "in_review",
       "role": "high",
       "depends_on": ["P1-2-T-01"],
       "tracker_issue": 12,

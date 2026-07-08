@@ -30,6 +30,9 @@ import {
 
 interface AuthContextValue {
   accessToken: string | null;
+  bootstrapped: boolean;
+  /** False while privileged MFA enrollment is pending on the refresh family. */
+  sessionMfaSatisfied: boolean;
   mfaEnrollment: MfaEnrollmentState | null;
   mfaLoginPending: MfaLoginPending | null;
   sessionExpired: boolean;
@@ -55,6 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     useState<MfaLoginPending | null>(null);
   const [sessionExpired, setSessionExpired] = useState(false);
   const [bootstrapped, setBootstrapped] = useState(false);
+  const [sessionMfaSatisfied, setSessionMfaSatisfied] = useState(true);
 
   const syncAccessToken = useCallback((token: string | null) => {
     setAccessToken(token);
@@ -76,6 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (claims?.tenant_id) {
         setLastTenantId(claims.tenant_id);
       }
+      setSessionMfaSatisfied(true);
       setSessionExpired(false);
     },
     [syncAccessToken],
@@ -105,6 +110,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (claims?.tenant_id) {
           setLastTenantId(claims.tenant_id);
         }
+        setSessionMfaSatisfied(true);
       }
 
       return result;
@@ -120,6 +126,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     clearCsrfToken();
     syncAccessToken(null);
+    setSessionMfaSatisfied(true);
     setSessionExpired(false);
   }, [syncAccessToken]);
 
@@ -130,6 +137,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const setMfaEnrollment = useCallback((state: MfaEnrollmentState) => {
     setMfaEnrollmentState(state);
+    setSessionMfaSatisfied(false);
   }, []);
 
   const clearMfaEnrollment = useCallback(() => {
@@ -168,6 +176,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         );
         if (!cancelled) {
           syncAccessToken(data.access_token);
+          setSessionMfaSatisfied(true);
         }
       } catch {
         // No cookie session — user stays unauthenticated.
@@ -191,6 +200,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const value = useMemo<AuthContextValue>(
     () => ({
       accessToken,
+      bootstrapped,
+      sessionMfaSatisfied,
       mfaEnrollment,
       mfaLoginPending,
       sessionExpired,
@@ -206,6 +217,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }),
     [
       accessToken,
+      bootstrapped,
+      sessionMfaSatisfied,
       mfaEnrollment,
       mfaLoginPending,
       sessionExpired,

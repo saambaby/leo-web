@@ -17,10 +17,12 @@
 - Role-based post-login routing via `lib/auth-routing.ts` (`routeAfterLogin`)
 - Auth flows: `/mfa`, `/invite/accept`, `/admin/setup` (P1-1-T-04)
 - Design tokens + auth UI migrated to `.theme-auth` and `components/design-system` primitives (P1-1-T-02)
+- P1-2 foundation: switch-tenant BFF, `useMemberships`, permission codegen, `last_tenant_id` (P1-2-T-01)
+- `AdminShell` light chrome + upgraded `ProtectedGuard` (session, MFA, `returnTo`, sign-out) on protected layouts (P1-2-T-02, in review)
 
 ## Not on floor
 
-- Protected layout session guards + switch-tenant (P1-2)
+- Switch-tenant modal + `PermissionGate` on nav + `/account` security UI (P1-2-T-03)
 - WSS, middleware security headers
 - Vitest / Playwright
 
