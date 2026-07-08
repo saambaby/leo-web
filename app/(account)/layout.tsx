@@ -1,3 +1,4 @@
+import { AdminShell } from "@/components/admin-shell";
 import { ProtectedGuard } from "@/components/protected-guard";
 
 export default function AccountGroupLayout({
@@ -5,5 +6,9 @@ export default function AccountGroupLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <ProtectedGuard>{children}</ProtectedGuard>;
+  return (
+    <ProtectedGuard>
+      <AdminShell>{children}</AdminShell>
+    </ProtectedGuard>
+  );
 }
