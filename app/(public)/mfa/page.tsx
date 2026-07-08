@@ -9,7 +9,8 @@ import { Alert, Button } from "@/components/design-system";
 import { FormField } from "@/components/form-field";
 import { api, ApiError } from "@/lib/api";
 import { useAuth } from "@/components/auth-provider";
-import { routeAfterLogin, safeReturnPath } from "@/lib/auth-routing";
+import { loginNavigationPath } from "@/lib/auth-post-login";
+import { safeReturnPath } from "@/lib/auth-routing";
 import {
   isMfaEnrollmentRequired,
   isMfaRequired,
@@ -23,7 +24,7 @@ function MfaContent() {
   const returnTo = safeReturnPath(searchParams.get("returnTo"));
   const {
     mfaLoginPending,
-    setSession,
+    finishLogin,
     setMfaEnrollment,
     clearMfaLoginPending,
   } = useAuth();
@@ -71,9 +72,13 @@ function MfaContent() {
       }
 
       if (isTokenPair(result)) {
-        await setSession(result);
+        const nav = await finishLogin(result);
         clearMfaLoginPending();
-        router.push(returnTo ?? routeAfterLogin(result.access_token));
+        router.push(
+          returnTo && nav.kind === "route"
+            ? returnTo
+            : loginNavigationPath(nav),
+        );
       }
     } catch (err) {
       if (err instanceof ApiError) {

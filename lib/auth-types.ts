@@ -57,6 +57,20 @@ export interface MfaLoginPending {
   password: string;
 }
 
+export type SwitchTenantResult =
+  | { access_token: string; expires_in: number }
+  | { mfa_required: true };
+
+export function isSwitchMfaRequired(
+  result: SwitchTenantResult,
+): result is { mfa_required: true } {
+  return "mfa_required" in result;
+}
+
+export type PostLoginNavigation =
+  | { kind: "route"; accessToken: string; destination: string }
+  | { kind: "mfa"; returnTo: string };
+
 export interface InviteAcceptResponse {
   user_id: string;
   tenant_id: string;

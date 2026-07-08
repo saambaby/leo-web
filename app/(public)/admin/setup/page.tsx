@@ -8,6 +8,7 @@ import { useAuth } from "@/components/auth-provider";
 import { AuthShell, AuthLoadingFallback } from "@/components/auth-shell";
 import { Alert, Button } from "@/components/design-system";
 import { FormField } from "@/components/form-field";
+import { loginNavigationPath } from "@/lib/auth-post-login";
 import { api, ApiError } from "@/lib/api";
 import {
   isMfaEnrollmentRequired,
@@ -24,7 +25,7 @@ function AdminSetupContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const setupToken = searchParams.get("token");
-  const { setSession, setMfaEnrollment } = useAuth();
+  const { finishLogin, setMfaEnrollment } = useAuth();
   const [step, setStep] = useState<SetupStep>("reset");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -102,8 +103,12 @@ function AdminSetupContent() {
       }
 
       if (isTokenPair(result)) {
-        await setSession(result);
-        router.push(PLATFORM_HOME);
+        const nav = await finishLogin(result);
+        router.push(
+          nav.kind === "mfa"
+            ? loginNavigationPath(nav)
+            : PLATFORM_HOME,
+        );
       }
     } catch (err) {
       if (err instanceof ApiError) {

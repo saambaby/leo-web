@@ -9,7 +9,7 @@ import { Alert, Button } from "@/components/design-system";
 import { FormField } from "@/components/form-field";
 import { api, ApiError } from "@/lib/api";
 import { useAuth } from "@/components/auth-provider";
-import { routeAfterLogin } from "@/lib/auth-routing";
+import { loginNavigationPath } from "@/lib/auth-post-login";
 import {
   isMfaEnrollmentRequired,
   isMfaRequired,
@@ -21,7 +21,7 @@ function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const invited = searchParams.get("invited") === "1";
-  const { setSession, setMfaEnrollment } = useAuth();
+  const { finishLogin, setMfaEnrollment } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [totpCode, setTotpCode] = useState("");
@@ -62,8 +62,8 @@ function LoginContent() {
       }
 
       if (isTokenPair(result)) {
-        await setSession(result);
-        router.push(routeAfterLogin(result.access_token));
+        const nav = await finishLogin(result);
+        router.push(loginNavigationPath(nav));
       }
     } catch (err) {
       if (err instanceof ApiError) {

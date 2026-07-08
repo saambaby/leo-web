@@ -6,7 +6,9 @@
     "dev": "next dev -p 8080",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "codegen:permissions": "node scripts/codegen-permissions.mjs",
+    "prebuild": "npm run codegen:permissions"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.101.2",
