@@ -1,0 +1,37 @@
+# leo-web — As-built state
+
+> Snapshot for `/pineapple:ongoing` adoption. Update via `/pineapple:context-update` when floor moves.
+
+**Date:** 2026-07-07  
+**Phase:** P1 (partial)  
+**Stack:** Next.js 16 · React 19 · TypeScript · Tailwind 4 · npm
+
+## Floor (verified in repo)
+
+- 9 App Router pages (public auth + dashboard placeholder)
+- BFF auth routes (`/api/auth/*`) with httpOnly `leo_refresh` cookie + CSRF
+- `AuthProvider` in-memory access token; TanStack Query in root layout
+- API client: Bearer on non-public paths + silent refresh via BFF
+- MFA enrollment pending in `AuthProvider` memory (not sessionStorage)
+- Design tokens scaffolded, auth UI still hardcoded dark
+
+## Not on floor
+
+- Role-based post-login routing (`routeAfterLogin`)
+- Admin, portal, invite, platform setup routes
+- WSS, middleware security headers
+- Vitest / Playwright
+
+## Drift vs `docs/ARCHITECTURE.md`
+
+| Topic | Target doc | As-built |
+|---|---|---|
+| Token storage | httpOnly refresh + memory access | **BFF cookie + AuthProvider memory** (P1-1-T-01) |
+| API client | Bearer + refresh interceptor | **Bearer + silent refresh** (P1-1-T-01) |
+| MFA route | separate `/mfa` | inline on `/login` |
+| Post-login | role routing | `/dashboard` placeholder |
+| Theme | light admin + auth scope | dark hardcoded auth |
+
+## Open questions
+
+See `.pineapple/product-spec.md` §Open questions — **needs human interview before `/pineapple:prd-readiness` pass.**

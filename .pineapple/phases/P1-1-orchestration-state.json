@@ -1,0 +1,66 @@
+{
+  "phase": "P1-1",
+  "parent_issue": 1,
+  "overall_status": "running",
+  "current_wave": 1,
+  "integration_contract_owner": "P1-1-T-01",
+  "tasks": {
+    "P1-1-T-01": {
+      "status": "in_flight",
+      "role": "high",
+      "depends_on": [],
+      "tracker_issue": 2,
+      "branch": "pin-2/p1-1-t01-session-foundation",
+      "agent": null,
+      "started_at": "2026-07-07T20:55:00-04:00",
+      "completed_at": null,
+      "commit": null,
+      "attempt": 1,
+      "error": null,
+      "worktree": false,
+      "notes": "Foundation task — coordinator branch, no worktree"
+    },
+    "P1-1-T-02": {
+      "status": "pending",
+      "role": "standard",
+      "depends_on": ["P1-1-T-01"],
+      "tracker_issue": 3,
+      "branch": "pin-3/p1-1-t02-design-system-auth",
+      "agent": null,
+      "started_at": null,
+      "completed_at": null,
+      "commit": null,
+      "attempt": 0,
+      "error": null,
+      "worktree": true
+    },
+    "P1-1-T-03": {
+      "status": "pending",
+      "role": "standard",
+      "depends_on": ["P1-1-T-01"],
+      "tracker_issue": 4,
+      "branch": "pin-4/p1-1-t03-router-stubs",
+      "agent": null,
+      "started_at": null,
+      "completed_at": null,
+      "commit": null,
+      "attempt": 0,
+      "error": null,
+      "worktree": true
+    },
+    "P1-1-T-04": {
+      "status": "pending",
+      "role": "high",
+      "depends_on": ["P1-1-T-01", "P1-1-T-02", "P1-1-T-03"],
+      "tracker_issue": 5,
+      "branch": "pin-5/p1-1-t04-auth-flows",
+      "agent": null,
+      "started_at": null,
+      "completed_at": null,
+      "commit": null,
+      "attempt": 0,
+      "error": null,
+      "worktree": true
+    }
+  }
+}

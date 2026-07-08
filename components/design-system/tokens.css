@@ -1,0 +1,59 @@
+/* ============================================================================
+   LEO WEB — design tokens
+   Source of truth: leo-workstation/.pineapple/design/leo-workstation.html
+   ============================================================================ */
+
+:root {
+  /* Black scale (auth / dark surfaces) */
+  --black-900: #0a0a0b;
+  --black-800: #111114;
+  --black-700: #18181d;
+  --black-600: #1e1e25;
+  --black-500: #26262f;
+  --black-400: #32323e;
+  --black-300: #4a4a5a;
+  --black-200: #6e6e82;
+  --black-100: #9e9eb5;
+  --black-50: #c8c8d8;
+
+  /* Web admin scale (light surfaces) */
+  --web-canvas: #f4f5f7;
+  --web-surface: #ffffff;
+  --web-border: #e4e6eb;
+  --web-muted: #7c8494;
+  --web-text: #14161a;
+  --web-text-2: #454c5c;
+
+  /* Signal colors (shared) */
+  --signal-live: #22c55e;
+  --signal-warn: #f59e0b;
+  --signal-error: #ef4444;
+  --signal-info: #94a3b8;
+  --signal-white: #f8f8fa;
+
+  /* Accent */
+  --accent: #e8e8f0;
+  --accent-dim: rgba(232, 232, 240, 0.12);
+
+  /* Radius */
+  --r-sm: 4px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-xl: 16px;
+  --r-2xl: 24px;
+
+  /* Typography (wired to next/font variables in layout.tsx) */
+  --font-display: var(--font-syne), sans-serif;
+  --font-body: var(--font-dm-sans), sans-serif;
+  --font-mono: var(--font-dm-mono), monospace;
+
+  /* Semantic defaults — light admin is the app default per ARCHITECTURE §12 */
+  --background: var(--web-canvas);
+  --foreground: var(--web-text);
+}
+
+/* Dark auth surface override — apply to auth route wrappers in a follow-up PR */
+.theme-auth {
+  --background: var(--black-900);
+  --foreground: var(--signal-white);
+}
