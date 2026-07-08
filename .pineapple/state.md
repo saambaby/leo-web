@@ -9,17 +9,18 @@
 ## Floor (verified in repo)
 
 - App Router layout groups: `(public)`, `(platform)`, `(lsp)`, `(portal)`, `(account)` with protected stub pages
-- 14 App Router pages (public auth under `(public)` + role stubs; `/dashboard` removed)
+- 18 App Router pages (public auth + invite/setup/mfa + role stubs; `/dashboard` removed)
 - BFF auth routes (`/api/auth/*`) with httpOnly `leo_refresh` cookie + CSRF
 - `AuthProvider` in-memory access token; TanStack Query in root layout
 - API client: Bearer on non-public paths + silent refresh via BFF
-- MFA enrollment pending in `AuthProvider` memory (not sessionStorage)
+- MFA enrollment + login pending in `AuthProvider` memory (not sessionStorage)
+- Role-based post-login routing via `lib/auth-routing.ts` (`routeAfterLogin`)
+- Auth flows: `/mfa`, `/invite/accept`, `/admin/setup` (P1-1-T-04)
 - Design tokens + auth UI migrated to `.theme-auth` and `components/design-system` primitives (P1-1-T-02)
 
 ## Not on floor
 
-- Role-based post-login routing (`routeAfterLogin`)
-- Invite, platform setup routes
+- Protected layout session guards + switch-tenant (P1-2)
 - WSS, middleware security headers
 - Vitest / Playwright
 
@@ -29,8 +30,8 @@
 |---|---|---|
 | Token storage | httpOnly refresh + memory access | **BFF cookie + AuthProvider memory** (P1-1-T-01) |
 | API client | Bearer + refresh interceptor | **Bearer + silent refresh** (P1-1-T-01) |
-| MFA route | separate `/mfa` | inline on `/login` |
-| Post-login | role routing | stub homes exist; login still → `/dashboard` until T04 |
+| MFA route | `/mfa` for deep links + inline on `/login` | **inline `/login` + `/mfa?returnTo=`** (P1-1-T-04) |
+| Post-login | role routing | **`routeAfterLogin` per JWT role** (P1-1-T-04) |
 | Theme | light admin + auth scope | **light admin default + `.theme-auth` on public auth** (P1-1-T-02) |
 
 ## Open questions
