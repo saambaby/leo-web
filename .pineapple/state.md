@@ -14,7 +14,7 @@
 - `AuthProvider` in-memory access token; TanStack Query in root layout
 - API client: Bearer on non-public paths + silent refresh via BFF
 - MFA enrollment pending in `AuthProvider` memory (not sessionStorage)
-- Design tokens scaffolded, auth UI still hardcoded dark
+- Design tokens + auth UI migrated to `.theme-auth` and `components/design-system` primitives (P1-1-T-02)
 
 ## Not on floor
 
@@ -31,7 +31,7 @@
 | API client | Bearer + refresh interceptor | **Bearer + silent refresh** (P1-1-T-01) |
 | MFA route | separate `/mfa` | inline on `/login` |
 | Post-login | role routing | stub homes exist; login still → `/dashboard` until T04 |
-| Theme | light admin + auth scope | dark hardcoded auth |
+| Theme | light admin + auth scope | **light admin default + `.theme-auth` on public auth** (P1-1-T-02) |
 
 ## Open questions
 
