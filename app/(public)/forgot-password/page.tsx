@@ -3,7 +3,8 @@
 import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { AuthShell } from "@/components/auth-shell";
-import { Alert, Button, FormField } from "@/components/form-field";
+import { Alert, Button } from "@/components/design-system";
+import { FormField } from "@/components/form-field";
 import { api, ApiError } from "@/lib/api";
 
 export default function ForgotPasswordPage() {
@@ -39,7 +40,7 @@ export default function ForgotPasswordPage() {
       title="Reset password"
       subtitle="We will email you a reset link"
       footer={
-        <Link href="/login" className="text-emerald-400 hover:underline">
+        <Link href="/login" className="text-signal-live hover:underline">
           Back to sign in
         </Link>
       }

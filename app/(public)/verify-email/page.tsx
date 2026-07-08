@@ -1,15 +1,10 @@
 import { Suspense } from "react";
+import { AuthLoadingFallback } from "@/components/auth-shell";
 import { VerifyEmailContent } from "@/components/verify-email-content";
 
 export default function VerifyEmailPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="flex min-h-full items-center justify-center bg-[#0b0d12] text-sm text-zinc-400">
-          Loading…
-        </div>
-      }
-    >
+    <Suspense fallback={<AuthLoadingFallback />}>
       <VerifyEmailContent />
     </Suspense>
   );

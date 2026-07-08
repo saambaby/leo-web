@@ -56,16 +56,16 @@
 **Status:** **target** · epic P1-2
 
 ## INV-WEB-UI-1 — Auth shell composition
-**Rule:** Public auth routes render inside `AuthShell` with shared `form-field` primitives (`FormField`, `SelectField`, `CheckboxField`, `Alert`, `Button`).
-**Why:** Consistent auth UX; single place to migrate to design tokens.
+**Rule:** Public auth routes render inside `AuthShell` (`.theme-auth` scope) with `components/design-system` primitives (`Input`, `Button`, `Checkbox`, `Alert`, `Label`) and `form-field` composites (`FormField`, `SelectField`, `CheckboxField`).
+**Why:** Consistent auth UX; single tokenized surface for auth forms.
 **Touched by:** signup, login, verify-email, forgot/reset password, mfa/enroll
 **Status:** as-built
 
-## INV-WEB-UI-2 — Auth dark theme (interim)
-**Rule:** Auth pages use hardcoded dark palette (`#0b0d12` canvas, zinc borders) — not yet `components/design-system` token classes or `.theme-auth`.
-**Why:** Tokens scaffolded but auth UI predates migration (`components/design-system/README.md`).
-**Revisit:** When applying `.theme-auth` scope per design-system README.
-**Status:** as-built
+## INV-WEB-UI-2 — Auth dark theme
+**Rule:** Auth pages use `.theme-auth` semantic tokens (`bg-background`, `text-foreground`) and `black-*` / `signal-*` scale classes from `components/design-system` — no hardcoded `#0b0d12` canvas in `AuthShell`.
+**Why:** Aligns auth UI with workstation token source (`components/design-system/tokens.css`).
+**Touched by:** `AuthShell`, public auth routes, `form-field.tsx`
+**Status:** as-built (P1-1-T-02)
 
 ## INV-WEB-ROUTE-1 — Query params for one-shot tokens
 **Rule:** Email verify and password reset read `?token=` from URL search params; missing token shows error state — never POST without token.

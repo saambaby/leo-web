@@ -17,7 +17,7 @@ Canonical design tokens for **leo-web**, aligned with the Leo workstation visual
 | `signal-*` | Status colors (shared) | `text-signal-live`, `text-signal-error` |
 | `r-*` / `rounded-*` | Border radius | `rounded-md` (8px), `rounded-xl` (16px) |
 
-Leo Web defaults to the **light admin** aesthetic (`web-canvas` background, `web-text` foreground). Auth routes will use the `.theme-auth` scope class in a follow-up migration.
+Leo Web defaults to the **light admin** aesthetic (`web-canvas` background, `web-text` foreground). Auth routes wrap content in `.theme-auth` via `AuthShell` and use `components/design-system` primitives.
 
 ---
 
@@ -114,7 +114,5 @@ const cardRadius = leoRadii.lg;
 
 ## Out of scope (this foundation)
 
-- Auth component migration (`auth-shell.tsx`, `form-field.tsx`) — follow-up PR
-- React primitives (`Button`, `Input`, `Chip`, etc.)
 - Light admin `AppShell` layout
 - Theme toggle / night mode

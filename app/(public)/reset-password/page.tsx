@@ -4,8 +4,9 @@ import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
-import { AuthShell } from "@/components/auth-shell";
-import { Alert, Button, FormField } from "@/components/form-field";
+import { AuthShell, AuthLoadingFallback } from "@/components/auth-shell";
+import { Alert, Button } from "@/components/design-system";
+import { FormField } from "@/components/form-field";
 import { api, ApiError } from "@/lib/api";
 
 function ResetPasswordContent() {
@@ -61,7 +62,7 @@ function ResetPasswordContent() {
           <Alert variant="error">Invalid or missing reset link.</Alert>
           <Link
             href="/forgot-password"
-            className="block text-center text-sm text-emerald-400 hover:underline"
+            className="block text-center text-sm text-signal-live hover:underline"
           >
             Request a new reset link
           </Link>
@@ -100,13 +101,7 @@ function ResetPasswordContent() {
 
 export default function ResetPasswordPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="flex min-h-full items-center justify-center bg-[#0b0d12] text-sm text-zinc-400">
-          Loading…
-        </div>
-      }
-    >
+    <Suspense fallback={<AuthLoadingFallback />}>
       <ResetPasswordContent />
     </Suspense>
   );

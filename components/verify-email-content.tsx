@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { AuthShell } from "@/components/auth-shell";
-import { Alert, Button } from "@/components/form-field";
+import { Alert, Button } from "@/components/design-system";
 import { api, ApiError } from "@/lib/api";
 
 type VerifyState = "loading" | "success" | "error" | "missing";
@@ -54,8 +54,8 @@ export function VerifyEmailContent() {
     <AuthShell title="Verify email" subtitle="Confirming your email address">
       {state === "loading" ? (
         <div className="space-y-3 text-center">
-          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-zinc-700 border-t-emerald-500" />
-          <p className="text-sm text-zinc-400">Verifying your link…</p>
+          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-black-400 border-t-signal-live" />
+          <p className="font-sans text-sm text-black-100">Verifying your link…</p>
         </div>
       ) : null}
 
@@ -77,13 +77,13 @@ export function VerifyEmailContent() {
           <div className="flex flex-col gap-2">
             <Link
               href="/signup"
-              className="text-center text-sm text-emerald-400 hover:text-emerald-300"
+              className="text-center text-sm text-signal-live hover:text-signal-live/80"
             >
               Sign up
             </Link>
             <Link
               href="/login"
-              className="text-center text-sm text-zinc-400 hover:text-zinc-300"
+              className="text-center text-sm text-black-100 hover:text-black-50"
             >
               Sign in
             </Link>
@@ -94,24 +94,24 @@ export function VerifyEmailContent() {
       {state === "error" ? (
         <div className="space-y-4">
           <Alert variant="error">{message}</Alert>
-          <p className="text-center text-xs text-zinc-500">
+          <p className="text-center font-sans text-xs text-black-200">
             If you already verified, try{" "}
-            <Link href="/login" className="text-emerald-400 hover:underline">
+            <Link href="/login" className="text-signal-live hover:underline">
               signing in
             </Link>
             .
           </p>
-          <button
+          <Button
             type="button"
+            variant="secondary"
             onClick={() => {
               attempted.current = false;
               setState("loading");
               window.location.reload();
             }}
-            className="inline-flex w-full items-center justify-center rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2.5 text-sm font-medium text-zinc-200 transition hover:bg-zinc-800"
           >
             Try again
-          </button>
+          </Button>
         </div>
       ) : null}
     </AuthShell>

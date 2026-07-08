@@ -4,13 +4,8 @@ import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AuthShell } from "@/components/auth-shell";
-import {
-  Alert,
-  Button,
-  CheckboxField,
-  FormField,
-  SelectField,
-} from "@/components/form-field";
+import { Alert, Button, Checkbox } from "@/components/design-system";
+import { FormField, SelectField } from "@/components/form-field";
 import { api, ApiError } from "@/lib/api";
 import type { SignupResponse } from "@/lib/auth-types";
 
@@ -93,7 +88,7 @@ export default function SignupPage() {
       footer={
         <>
           Already have an account?{" "}
-          <Link href="/login" className="text-emerald-400 hover:underline">
+          <Link href="/login" className="text-signal-live hover:underline">
             Sign in
           </Link>
         </>
@@ -155,23 +150,26 @@ export default function SignupPage() {
           </>
         ) : null}
 
-        <div className="space-y-2 rounded-lg border border-zinc-800 bg-zinc-900/50 p-3">
-          <CheckboxField
-            label="I agree to the Terms of Service"
-            checked={tos}
-            onChange={setTos}
-          />
-          <CheckboxField
-            label="I agree to the Privacy Policy"
-            checked={privacy}
-            onChange={setPrivacy}
-          />
-          {variant === "business_lsp" ? (
-            <CheckboxField
-              label="I acknowledge the Business Associate Agreement"
-              checked={baaAck}
-              onChange={setBaaAck}
+        <div className="space-y-2 rounded-lg border border-black-600 bg-black-700/50 p-3">
+          <label className="flex items-start gap-2 font-sans text-sm text-black-50">
+            <Checkbox checked={tos} onChange={(e) => setTos(e.target.checked)} />
+            <span>I agree to the Terms of Service</span>
+          </label>
+          <label className="flex items-start gap-2 font-sans text-sm text-black-50">
+            <Checkbox
+              checked={privacy}
+              onChange={(e) => setPrivacy(e.target.checked)}
             />
+            <span>I agree to the Privacy Policy</span>
+          </label>
+          {variant === "business_lsp" ? (
+            <label className="flex items-start gap-2 font-sans text-sm text-black-50">
+              <Checkbox
+                checked={baaAck}
+                onChange={(e) => setBaaAck(e.target.checked)}
+              />
+              <span>I acknowledge the Business Associate Agreement</span>
+            </label>
           ) : null}
         </div>
 
