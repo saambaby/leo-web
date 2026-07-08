@@ -46,6 +46,47 @@ export async function proxyLogout(refreshToken: string): Promise<void> {
   }
 }
 
+export interface SwitchTenantBody {
+  tenant_id: string;
+  refresh_token: string;
+  totp_code?: string;
+}
+
+export type SwitchTenantApiResult =
+  | TokenPairResponse
+  | { mfa_required: true };
+
+export async function proxySwitchTenant(
+  accessToken: string,
+  body: SwitchTenantBody,
+): Promise<SwitchTenantApiResult> {
+  const res = await fetch(`${API_URL}/api/v1/auth/switch-tenant`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    const errorBody = (await res.json().catch(() => null)) as {
+      message?: string;
+    } | null;
+    throw new ProxyAuthError(
+      res.status,
+      errorBody?.message ?? `Switch tenant failed (${res.status})`,
+    );
+  }
+
+  const data = (await res.json()) as SwitchTenantApiResult;
+  if ("mfa_required" in data && data.mfa_required) {
+    return { mfa_required: true };
+  }
+
+  return data as TokenPairResponse;
+}
+
 export class ProxyAuthError extends Error {
   constructor(
     public readonly statusCode: number,

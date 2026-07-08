@@ -9,7 +9,8 @@ import { AuthShell, AuthLoadingFallback } from "@/components/auth-shell";
 import { Alert, Button } from "@/components/design-system";
 import { FormField } from "@/components/form-field";
 import { api, ApiError } from "@/lib/api";
-import { routeAfterLogin, safeReturnPath } from "@/lib/auth-routing";
+import { loginNavigationPath } from "@/lib/auth-post-login";
+import { safeReturnPath } from "@/lib/auth-routing";
 import type { TokenPair } from "@/lib/auth-types";
 
 function MfaEnrollContent() {
@@ -18,7 +19,7 @@ function MfaEnrollContent() {
   const returnTo = safeReturnPath(searchParams.get("returnTo"));
   const {
     mfaEnrollment: enrollment,
-    setSession,
+    finishLogin,
     clearMfaEnrollment,
   } = useAuth();
   const [totpCode, setTotpCode] = useState("");
@@ -41,9 +42,11 @@ function MfaEnrollContent() {
         }),
       });
 
-      await setSession(result);
+      const nav = await finishLogin(result);
       clearMfaEnrollment();
-      router.push(returnTo ?? routeAfterLogin(result.access_token));
+      router.push(
+        returnTo && nav.kind === "route" ? returnTo : loginNavigationPath(nav),
+      );
     } catch (err) {
       if (err instanceof ApiError) {
         setError(err.message);

@@ -10,14 +10,18 @@ import {
   type ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
-import { bffPost, clearCsrfToken } from "@/lib/auth-bff-client";
+import { bffPost, bffPostWithAuth, clearCsrfToken } from "@/lib/auth-bff-client";
+import { finishLoginFlow } from "@/lib/auth-post-login";
 import type {
   JwtClaims,
   MfaEnrollmentState,
   MfaLoginPending,
+  PostLoginNavigation,
+  SwitchTenantResult,
   TokenPair,
 } from "@/lib/auth-types";
 import { parseJwtClaims } from "@/lib/auth-routing";
+import { setLastTenantId } from "@/lib/last-tenant";
 import {
   setAccessToken as setStoredAccessToken,
   setAccessTokenChangeHandler,
@@ -30,6 +34,8 @@ interface AuthContextValue {
   mfaLoginPending: MfaLoginPending | null;
   sessionExpired: boolean;
   setSession: (pair: TokenPair) => Promise<void>;
+  finishLogin: (pair: TokenPair) => Promise<PostLoginNavigation>;
+  switchTenant: (tenantId: string, totpCode?: string) => Promise<SwitchTenantResult>;
   clearSession: () => Promise<void>;
   decodeClaims: () => JwtClaims | null;
   setMfaEnrollment: (state: MfaEnrollmentState) => void;
@@ -66,9 +72,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         },
       );
       syncAccessToken(data.access_token);
+      const claims = parseJwtClaims(data.access_token);
+      if (claims?.tenant_id) {
+        setLastTenantId(claims.tenant_id);
+      }
       setSessionExpired(false);
     },
     [syncAccessToken],
+  );
+
+  const finishLogin = useCallback(
+    (pair: TokenPair) =>
+      finishLoginFlow(pair, { setSession, syncAccessToken }),
+    [setSession, syncAccessToken],
+  );
+
+  const switchTenant = useCallback(
+    async (tenantId: string, totpCode?: string): Promise<SwitchTenantResult> => {
+      if (!accessToken) {
+        throw new Error("Not authenticated");
+      }
+
+      const result = await bffPostWithAuth<SwitchTenantResult>(
+        "/api/auth/switch-tenant",
+        accessToken,
+        { tenant_id: tenantId, totp_code: totpCode },
+      );
+
+      if (!("mfa_required" in result)) {
+        syncAccessToken(result.access_token);
+        const claims = parseJwtClaims(result.access_token);
+        if (claims?.tenant_id) {
+          setLastTenantId(claims.tenant_id);
+        }
+      }
+
+      return result;
+    },
+    [accessToken, syncAccessToken],
   );
 
   const clearSession = useCallback(async () => {
@@ -154,6 +195,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       mfaLoginPending,
       sessionExpired,
       setSession,
+      finishLogin,
+      switchTenant,
       clearSession,
       decodeClaims,
       setMfaEnrollment,
@@ -167,6 +210,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       mfaLoginPending,
       sessionExpired,
       setSession,
+      finishLogin,
+      switchTenant,
       clearSession,
       decodeClaims,
       setMfaEnrollment,

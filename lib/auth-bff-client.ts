@@ -32,6 +32,30 @@ export async function bffPost<T>(
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
 
+  return parseBffResponse<T>(res);
+}
+
+export async function bffPostWithAuth<T>(
+  path: string,
+  accessToken: string,
+  body?: unknown,
+): Promise<T> {
+  const token = await ensureCsrfToken();
+  const res = await fetch(path, {
+    method: "POST",
+    credentials: "same-origin",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRF-Token": token,
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: body !== undefined ? JSON.stringify(body) : undefined,
+  });
+
+  return parseBffResponse<T>(res);
+}
+
+async function parseBffResponse<T>(res: Response): Promise<T> {
   if (!res.ok) {
     const errorBody = (await res.json().catch(() => null)) as {
       message?: string;
