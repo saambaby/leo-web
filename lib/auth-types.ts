@@ -51,3 +51,15 @@ export interface JwtClaims {
   role: string;
   exp: number;
 }
+
+export interface MfaLoginPending {
+  email: string;
+  password: string;
+}
+
+export interface InviteAcceptResponse {
+  user_id: string;
+  tenant_id: string;
+  role: string;
+  membership_id: string;
+}

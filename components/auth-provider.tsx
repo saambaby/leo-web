@@ -11,7 +11,13 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { bffPost, clearCsrfToken } from "@/lib/auth-bff-client";
-import type { JwtClaims, MfaEnrollmentState, TokenPair } from "@/lib/auth-types";
+import type {
+  JwtClaims,
+  MfaEnrollmentState,
+  MfaLoginPending,
+  TokenPair,
+} from "@/lib/auth-types";
+import { parseJwtClaims } from "@/lib/auth-routing";
 import {
   setAccessToken as setStoredAccessToken,
   setAccessTokenChangeHandler,
@@ -21,43 +27,26 @@ import {
 interface AuthContextValue {
   accessToken: string | null;
   mfaEnrollment: MfaEnrollmentState | null;
+  mfaLoginPending: MfaLoginPending | null;
   sessionExpired: boolean;
   setSession: (pair: TokenPair) => Promise<void>;
   clearSession: () => Promise<void>;
   decodeClaims: () => JwtClaims | null;
   setMfaEnrollment: (state: MfaEnrollmentState) => void;
   clearMfaEnrollment: () => void;
+  setMfaLoginPending: (state: MfaLoginPending) => void;
+  clearMfaLoginPending: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
-
-function parseJwtClaims(token: string): JwtClaims | null {
-  try {
-    const payload = token.split(".")[1];
-    if (!payload) return null;
-    const decoded = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/"))) as {
-      sub?: string;
-      tenant_id?: string;
-      role?: string;
-      exp?: number;
-    };
-    if (!decoded.sub || !decoded.role || decoded.exp === undefined) return null;
-    return {
-      sub: decoded.sub,
-      tenant_id: decoded.tenant_id,
-      role: decoded.role,
-      exp: decoded.exp,
-    };
-  } catch {
-    return null;
-  }
-}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [mfaEnrollment, setMfaEnrollmentState] =
     useState<MfaEnrollmentState | null>(null);
+  const [mfaLoginPending, setMfaLoginPendingState] =
+    useState<MfaLoginPending | null>(null);
   const [sessionExpired, setSessionExpired] = useState(false);
   const [bootstrapped, setBootstrapped] = useState(false);
 
@@ -104,6 +93,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const clearMfaEnrollment = useCallback(() => {
     setMfaEnrollmentState(null);
+  }, []);
+
+  const setMfaLoginPending = useCallback((state: MfaLoginPending) => {
+    setMfaLoginPendingState(state);
+  }, []);
+
+  const clearMfaLoginPending = useCallback(() => {
+    setMfaLoginPendingState(null);
   }, []);
 
   useEffect(() => {
@@ -154,22 +151,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     () => ({
       accessToken,
       mfaEnrollment,
+      mfaLoginPending,
       sessionExpired,
       setSession,
       clearSession,
       decodeClaims,
       setMfaEnrollment,
       clearMfaEnrollment,
+      setMfaLoginPending,
+      clearMfaLoginPending,
     }),
     [
       accessToken,
       mfaEnrollment,
+      mfaLoginPending,
       sessionExpired,
       setSession,
       clearSession,
       decodeClaims,
       setMfaEnrollment,
       clearMfaEnrollment,
+      setMfaLoginPending,
+      clearMfaLoginPending,
     ],
   );
 
