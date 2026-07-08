@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/auth-provider";
 import { AuthShell } from "@/components/auth-shell";
-import { Alert, Button, FormField } from "@/components/form-field";
+import { Alert, Button } from "@/components/design-system";
+import { FormField } from "@/components/form-field";
 import { api, ApiError } from "@/lib/api";
 import type { TokenPair } from "@/lib/auth-types";
 
@@ -62,7 +63,7 @@ export default function MfaEnrollPage() {
           </Alert>
           <Link
             href="/login"
-            className="block text-center text-sm text-emerald-400 hover:underline"
+            className="block text-center text-sm text-signal-live hover:underline"
           >
             Back to sign in
           </Link>
@@ -74,16 +75,16 @@ export default function MfaEnrollPage() {
             Add this account to your authenticator app using the secret below,
             then enter the 6-digit code.
           </Alert>
-          <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-3">
-            <p className="text-xs uppercase tracking-wide text-zinc-500">
+          <div className="rounded-lg border border-black-600 bg-black-700 p-3">
+            <p className="text-xs uppercase tracking-wide text-black-200">
               Manual entry secret
             </p>
-            <p className="mt-1 break-all font-mono text-sm text-emerald-300">
+            <p className="mt-1 break-all font-mono text-sm text-signal-live">
               {enrollment.secret}
             </p>
             <a
               href={enrollment.otpauth_url}
-              className="mt-2 inline-block text-xs text-sky-400 hover:underline"
+              className="mt-2 inline-block text-xs text-signal-info hover:underline"
             >
               Open otpauth link
             </a>

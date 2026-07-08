@@ -4,7 +4,8 @@ import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AuthShell } from "@/components/auth-shell";
-import { Alert, Button, FormField } from "@/components/form-field";
+import { Alert, Button } from "@/components/design-system";
+import { FormField } from "@/components/form-field";
 import { api, ApiError } from "@/lib/api";
 import { useAuth } from "@/components/auth-provider";
 import {
@@ -84,7 +85,7 @@ export default function LoginPage() {
       footer={
         <>
           No account?{" "}
-          <Link href="/signup" className="text-emerald-400 hover:underline">
+          <Link href="/signup" className="text-signal-live hover:underline">
             Sign up
           </Link>
         </>
@@ -133,7 +134,7 @@ export default function LoginPage() {
         <p className="text-center text-sm">
           <Link
             href="/forgot-password"
-            className="text-zinc-400 hover:text-zinc-300"
+            className="text-black-100 hover:text-black-50"
           >
             Forgot password?
           </Link>

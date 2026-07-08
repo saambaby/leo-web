@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
-import { AuthShell } from "@/components/auth-shell";
-import { Alert, Button } from "@/components/form-field";
+import { AuthShell, AuthLoadingFallback } from "@/components/auth-shell";
+import { Alert, Button } from "@/components/design-system";
 
 function SignupSuccessContent() {
   const searchParams = useSearchParams();
@@ -20,7 +20,7 @@ function SignupSuccessContent() {
           {email ? (
             <>
               We sent a verification link to{" "}
-              <strong className="text-white">{email}</strong>. Open the link in
+              <strong className="text-foreground">{email}</strong>. Open the link in
               that message, then sign in.
             </>
           ) : (
@@ -29,16 +29,16 @@ function SignupSuccessContent() {
             </>
           )}
         </Alert>
-        <p className="text-sm text-zinc-400">
+        <p className="font-sans text-sm text-black-100">
           The link expires in 24 hours. If you do not see the email, check spam
           or wait a moment and refresh your inbox.
         </p>
         <Button onClick={() => (window.location.href = "/login")}>
           Go to sign in
         </Button>
-        <p className="text-center text-xs text-zinc-500">
+        <p className="text-center font-sans text-xs text-black-200">
           Wrong address?{" "}
-          <Link href="/signup" className="text-emerald-400 hover:underline">
+          <Link href="/signup" className="text-signal-live hover:underline">
             Sign up again
           </Link>
         </p>
@@ -49,13 +49,7 @@ function SignupSuccessContent() {
 
 export default function SignupSuccessPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="flex min-h-full items-center justify-center bg-[#0b0d12] text-sm text-zinc-400">
-          Loading…
-        </div>
-      }
-    >
+    <Suspense fallback={<AuthLoadingFallback />}>
       <SignupSuccessContent />
     </Suspense>
   );
