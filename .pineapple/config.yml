@@ -1,0 +1,44 @@
+# Pineapple project config — leo-web (Next.js admin & customer portal).
+# Adopted onto an existing repo via /pineapple:adopt (2026-07-07).
+#
+# Adoption model: MAP-IN-PLACE. Human-canonical docs live in docs/; Pineapple
+# workflow artifacts live in .pineapple/. Platform truth is NOT copied — linked
+# to sibling ../leo-api (and ../leo-workstation for ops-client parity).
+
+adoption: map-in-place
+
+artifacts:
+  product_spec_platform: ../leo-api/docs/product-spec.md     # business what/why (read-only)
+  product_spec_client: docs/ARCHITECTURE.md                  # client scope §1–3, §18
+  product_spec_as_built: .pineapple/product-spec.md          # reverse-engineered as-is
+  architecture: docs/ARCHITECTURE.md                         # canonical — edit here first
+  architecture_as_built: .pineapple/architecture-overview.md # full target copy + §20 as-built delta
+  invariants: .pineapple/invariants.md                       # INV-WEB-* / client-only (to fill)
+  invariants_platform: ../leo-api/.pineapple/invariants.md   # INV-* platform (read-only)
+  phases_dir: .pineapple/phases/
+  phases_current: .pineapple/phases/INDEX.md
+  phases_roadmap: docs/ARCHITECTURE.md                       # §16 roadmap + §17 checklist
+  release_plan_platform: ../leo-api/docs/release-plan.md     # version alignment
+  features_dir: .pineapple/features/
+  feature_domains: docs/ARCHITECTURE.md                      # §8 domains (until feature specs exist)
+  code_map: .pineapple/code-map.md
+  repo_structure: docs/ARCHITECTURE.md                       # §15 repository structure
+  platform_refs: docs/README.md                              # index → leo-api docs
+  design_tokens: components/design-system/README.md
+  design_source: ../leo-workstation/.pineapple/design/leo-workstation.html
+  state: .pineapple/state.md
+
+tracker:
+  backend: gh
+  repo: saambaby/leo-web
+  # Issues filed on the leo-web GitHub repo (not monorepo arp). Branches: pin-<issue>/<slug>.
+
+branch_format: "pin-{issue}/{slug}"
+
+notes:
+  - "Canonical web architecture is docs/ARCHITECTURE.md — do not duplicate in leo-api."
+  - "Platform INV-* in ../leo-api/.pineapple/invariants.md; add client-only INV-WEB-* locally."
+  - "leo-api CLAUDE.md already links here for Next.js client architecture."
+  - "P1 auth routes implemented; full phase checklist in ARCHITECTURE §17."
+  - "Sibling feature specs (signup, activation) live in ../leo-api/.pineapple/features/."
+  - "Version tags align with ../leo-api/docs/release-plan.md (strict-superset per version)."

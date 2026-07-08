@@ -1,0 +1,112 @@
+apiVersion: pineapple/v1
+kind: TaskGraph
+metadata:
+  project: leo-web
+  phase: P1-1
+  status: approved
+  created: "2026-07-07"
+
+waves:
+  - id: W1
+    name: Foundation
+    gate: manual
+  - id: W2
+    name: Structure & UI
+    gate: manual
+  - id: W3
+    name: Flow wiring
+    gate: manual
+
+tasks:
+  - id: P1-1-T-01
+    title: BFF session layer, AuthProvider, api interceptor, TanStack Query
+    wave: W1
+    feature_spec: .pineapple/features/p1-1-session-auth-foundation.md
+    area: foundation
+    surface: full-stack
+    model: high
+    depends_on: []
+    verification: auto
+    human_admin: false
+    issue: 2
+    acceptance_criteria:
+      - app/api/auth/session, refresh, logout, csrf handlers proxy leo-api; leo_refresh httpOnly cookie set/cleared server-side only
+      - CSRF leo_csrf cookie; mutating BFF POSTs require X-CSRF-Token header
+      - AuthProvider holds access_token in memory; exposes setSession, clearSession, decodeClaims
+      - lib/api.ts Bearer on non-public paths; silent refresh once on 401; session-expired overlay redirects to /login on failure
+      - QueryClientProvider in root layout; @tanstack/react-query dependency added
+      - lib/session.ts token persistence removed; MFA enrollment pending in AuthProvider memory
+      - No access_token or refresh_token in sessionStorage or localStorage (DevTools audit)
+      - npm run build and npm run lint pass
+    notes: Single-writer for auth integration contract. Retires ADR-WEB-001. BFF browser JSON snake_case; refresh never echoed to client JS.
+
+  - id: P1-1-T-02
+    title: Design-system primitives and .theme-auth AuthShell migration
+    wave: W2
+    feature_spec: .pineapple/features/p1-1-session-auth-foundation.md
+    area: design-system
+    surface: frontend
+    model: standard
+    depends_on:
+      - P1-1-T-01
+    verification: auto
+    human_admin: false
+    issue: 3
+    acceptance_criteria:
+      - components/design-system exports Input, Button, Checkbox, Alert, Label using token classes
+      - AuthShell uses .theme-auth and black-* tokens; no hardcoded #0b0d12 canvas
+      - Public auth routes (signup, login, verify-email, forgot-password, reset-password, mfa/enroll) use design-system primitives
+      - npm run build and npm run lint pass
+    notes: Visual migration only; do not rewire session logic (P1-1-T-04). Safe-parallel with P1-1-T-03.
+
+  - id: P1-1-T-03
+    title: App Router groups, protected stubs, WorkstationCta
+    wave: W2
+    feature_spec: .pineapple/features/p1-1-session-auth-foundation.md
+    area: shell
+    surface: frontend
+    model: standard
+    depends_on:
+      - P1-1-T-01
+    verification: auto
+    human_admin: false
+    issue: 4
+    acceptance_criteria:
+      - Route groups (public), (platform), (lsp), (portal), (account); public auth under (public)
+      - Stub pages at /admin/platform, /admin/lsp, /portal/org, /portal/call, /account
+      - Protected group layouts redirect unauthenticated users to /login via useAuth
+      - WorkstationCta native open/install copy; optional leoconnexio://; no WORKSTATION_URL env
+      - app/dashboard removed; no /dashboard route
+      - npm run build and npm run lint pass
+    notes: Full MFA completion guard deferred to P1-2 (INV-WEB-AUTH-5). Stubs only.
+
+  - id: P1-1-T-04
+    title: Auth flows, role routing, invite/setup/mfa routes
+    wave: W3
+    feature_spec: .pineapple/features/p1-1-session-auth-foundation.md
+    area: auth-ui
+    surface: full-stack
+    model: high
+    depends_on:
+      - P1-1-T-01
+      - P1-1-T-02
+      - P1-1-T-03
+    verification: manual
+    human_admin: false
+    issue: 5
+    acceptance_criteria:
+      - lib/auth-routing.ts maps JWT role to home per product spec; missing tenant_id routes to /account
+      - Login inline TOTP on mfa_required; success calls setSession and routeAfterLogin
+      - /mfa page accepts TOTP with returnTo query param without breaking inline login
+      - /invite/accept posts invitations/accept then redirects /login?invited=1 without setSession
+      - /admin/setup funnel reset password to MFA enroll to /admin/platform stub
+      - MFA enrollment pending stored in AuthProvider memory not sessionStorage
+      - .pineapple/invariants.md updated for INV-WEB-AUTH-1/2/3, ROUTE-2/3/4, MFA-1, UI-2 promotion
+      - npm run build and npm run lint pass
+    notes: Manual E2E sign-off for all three signup variants, invite accept, admin setup, tenant-less and customer_user stub homes. Visual review vs leo-workstation.html.
+
+coordinator:
+  max_concurrent: 3
+  stuck_threshold_seconds: 5400
+  worktree_strategy: per-task
+  completion_strategy: review-gate
