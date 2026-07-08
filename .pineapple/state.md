@@ -8,7 +8,8 @@
 
 ## Floor (verified in repo)
 
-- 9 App Router pages (public auth + dashboard placeholder)
+- App Router layout groups: `(public)`, `(platform)`, `(lsp)`, `(portal)`, `(account)` with protected stub pages
+- 14 App Router pages (public auth under `(public)` + role stubs; `/dashboard` removed)
 - BFF auth routes (`/api/auth/*`) with httpOnly `leo_refresh` cookie + CSRF
 - `AuthProvider` in-memory access token; TanStack Query in root layout
 - API client: Bearer on non-public paths + silent refresh via BFF
@@ -18,7 +19,7 @@
 ## Not on floor
 
 - Role-based post-login routing (`routeAfterLogin`)
-- Admin, portal, invite, platform setup routes
+- Invite, platform setup routes
 - WSS, middleware security headers
 - Vitest / Playwright
 
@@ -29,7 +30,7 @@
 | Token storage | httpOnly refresh + memory access | **BFF cookie + AuthProvider memory** (P1-1-T-01) |
 | API client | Bearer + refresh interceptor | **Bearer + silent refresh** (P1-1-T-01) |
 | MFA route | separate `/mfa` | inline on `/login` |
-| Post-login | role routing | `/dashboard` placeholder |
+| Post-login | role routing | stub homes exist; login still → `/dashboard` until T04 |
 | Theme | light admin + auth scope | dark hardcoded auth |
 
 ## Open questions
