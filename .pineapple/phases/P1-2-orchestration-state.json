@@ -1,0 +1,33 @@
+{
+  "phase": "P1-2",
+  "parent_issue": 10,
+  "overall_status": "running",
+  "current_wave": 1,
+  "tasks": {
+    "P1-2-T-01": {
+      "status": "in_flight",
+      "role": "high",
+      "depends_on": [],
+      "tracker_issue": 11,
+      "branch": "pin-11/p1-2-t01-foundation",
+      "attempt": 1,
+      "worktree": false
+    },
+    "P1-2-T-02": {
+      "status": "pending",
+      "role": "high",
+      "depends_on": ["P1-2-T-01"],
+      "tracker_issue": 12,
+      "branch": "pin-12/p1-2-t02-admin-shell",
+      "worktree": true
+    },
+    "P1-2-T-03": {
+      "status": "pending",
+      "role": "high",
+      "depends_on": ["P1-2-T-01", "P1-2-T-02"],
+      "tracker_issue": 13,
+      "branch": "pin-13/p1-2-t03-switch-account",
+      "worktree": true
+    }
+  }
+}

@@ -1,0 +1,90 @@
+apiVersion: pineapple/v1
+kind: TaskGraph
+metadata:
+  project: leo-web
+  phase: P1-2
+  status: approved
+  created: "2026-07-08"
+
+waves:
+  - id: W1
+    name: Foundation
+    gate: manual
+  - id: W2
+    name: Admin shell
+    gate: manual
+  - id: W3
+    name: Tenant switch and account
+    gate: manual
+
+tasks:
+  - id: P1-2-T-01
+    title: Switch-tenant BFF, memberships hook, permission codegen, last_tenant_id
+    wave: W1
+    feature_spec: .pineapple/features/p1-2-protected-shell.md
+    area: foundation
+    surface: full-stack
+    model: high
+    depends_on: []
+    verification: auto
+    human_admin: false
+    issue: 11
+    acceptance_criteria:
+      - BFF handles mfa_required response without setting session
+      - useMemberships TanStack Query hook fetches GET /memberships with correct snake_case types and nested organization
+      - npm run codegen:permissions generates lib/permissions/generated.ts from leo-api permission-matrix.ts
+      - hasPermission(role, permission) and PermissionGate component with default-deny empty state
+      - leo.last_tenant_id persisted on setSession and successful switch; auto-switch on login when stored id differs and is active membership
+      - npm run build and npm run lint pass
+    notes: Single-writer for P1-2 integration contract. Coordinator branch on main, no worktree.
+
+  - id: P1-2-T-02
+    title: AdminShell, session and MFA guards, sign-out
+    wave: W2
+    feature_spec: .pineapple/features/p1-2-protected-shell.md
+    area: shell
+    surface: frontend
+    model: high
+    depends_on:
+      - P1-2-T-01
+    verification: auto
+    human_admin: false
+    issue: 12
+    acceptance_criteria:
+      - ProtectedGuard redirects unauthenticated users to /login with returnTo query param
+      - Privileged roles without MFA satisfied redirect to /mfa/enroll
+      - AdminShell light-theme layout with header sidebar role-aware nav and sign-out action
+      - Protected layout groups wrap children in AdminShell
+      - Sign-out calls BFF logout clears AuthProvider and redirects to /login
+      - Guard loading states use design-system tokens not hardcoded dark palette
+      - npm run build and npm run lint pass
+    notes: Nav links without PermissionGate yet. Switch-tenant header slot stubbed for T03.
+
+  - id: P1-2-T-03
+    title: Switch-tenant modal, PermissionGate nav, account security UI
+    wave: W3
+    feature_spec: .pineapple/features/p1-2-protected-shell.md
+    area: shell
+    surface: full-stack
+    model: high
+    depends_on:
+      - P1-2-T-01
+      - P1-2-T-02
+    verification: manual
+    human_admin: false
+    issue: 13
+    acceptance_criteria:
+      - Switch control visible when memberships.length greater than 1
+      - Modal lists organization name type and role; full-row button min-height 44px
+      - Switch calls BFF; success setSession and routeAfterLogin; mfa_required redirects to /mfa with returnTo
+      - PermissionGate applied to AdminShell nav; cross-role paths denied
+      - /account shows password shortcut MFA link interpreter empty state and WorkstationCta when tenant_id absent
+      - .pineapple/invariants.md updated for INV-WEB-AUTH-4/5 TENANT-1 PERM-1 promotion
+      - npm run build and npm run lint pass
+    notes: Manual E2E for guards switch-tenant MFA path sign-out and tenant-less account. Closes P1 spine.
+
+coordinator:
+  max_concurrent: 3
+  stuck_threshold_seconds: 5400
+  worktree_strategy: per-task
+  completion_strategy: review-gate
